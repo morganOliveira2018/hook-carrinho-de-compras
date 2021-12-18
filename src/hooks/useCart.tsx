@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { api } from '../services/api';
-import { Product, Stock } from '../types';
+import { Product } from '../types';
 
 interface CartProviderProps {
   children: ReactNode;
@@ -41,6 +41,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const stock = await api.get(`/stock/${productId}`);
       const stockAmount = stock.data.amount;
       const currentAmount = productExists ? productExists.amount : 0;
+      console.log(currentAmount);
       const amount = currentAmount + 1;
 
       if(amount > stockAmount) {
@@ -50,11 +51,17 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       if(productExists) {
         productExists.amount = amount; // se o produto existe de fato vai atualizar a quantidade do prod
       } else {
-        // se for um produto novo
+        // se for um produto novo, então vai add ao produto
         const product = await api.get(`/products/${productId}`);
-
-        
+        const newProduct = {
+          ...product.data,
+          amount: 1,
+        }
+        updatedCart.push(newProduct);
       }
+
+      setCart(updatedCart);
+      localStorage.setItem("@RocketShoes:cart", JSON.stringify(updatedCart));
     } catch {
       toast.error('Erro na adição do produto');
     }
@@ -62,9 +69,9 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
-      TODO
+      // TODO
     } catch {
-      TODO
+      // TODO
     }
   };
 
@@ -73,9 +80,9 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      TODO
+      // TODO
     } catch {
-      TODO
+      // TODO
     }
   };
 
